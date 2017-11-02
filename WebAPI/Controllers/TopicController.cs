@@ -1,4 +1,5 @@
-﻿using System;
+﻿using WebAPI.State;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,37 +12,46 @@ namespace WebAPI.Controllers
     [Route("api/Topic")]
     public class TopicController : Controller
     {
+		private IDataLayer dataLayer;
+		public TopicController(IDataLayer dataLayer)
+		{
+			this.dataLayer = dataLayer;
+		}
+
         // GET: api/Topic
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IList<Topic>> Get()
         {
-            return new string[] { "value1", "value2" };
+			return await dataLayer.TopicReadAll();
         }
 
 		// GET: api/Topic/5
 		//[HttpGet("{id}", Name = "Get")]
 		[HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IList<Topic>> Get(int id)
         {
-            return "value";
+            return await dataLayer.TopicRead(id);
         }
         
         // POST: api/Topic
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<int> Post([FromBody]string name, [FromBody]bool enabled)
         {
+			return await dataLayer.TopicCreate(name, enabled);
         }
         
         // PUT: api/Topic/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public async Task<int> Put(int id, [FromBody]string name, [FromBody]bool enabled)
         {
+			return await dataLayer.TopicUpdate(id, name, enabled);
         }
         
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+			dataLayer.TopicDelete(id);
         }
     }
 }

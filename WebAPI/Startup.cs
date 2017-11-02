@@ -24,6 +24,7 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+			services.AddSingleton<IDataLayer>(new DataLayer());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
