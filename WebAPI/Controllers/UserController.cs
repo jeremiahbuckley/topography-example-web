@@ -1,4 +1,5 @@
-﻿using System;
+﻿using WebAPI.State;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,37 +12,46 @@ namespace WebAPI.Controllers
     [Route("api/User")]
     public class UserController : Controller
     {
+		private IDataLayer dataLayer;
+
+		public UserController(IDataLayer dataLayer)
+		{
+			this.dataLayer = dataLayer;
+		}
         // GET: api/User
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IList<User>> Get()
         {
-            return new string[] { "value1", "value2" };
+			return await dataLayer.UserReadAll();
         }
 
         // GET: api/User/5
         //[HttpGet("{id}", Name = "Get")]
 		[HttpGet("{id}")]
-		public string Get(int id)
+		public async Task<IList<User>> Get(int id)
         {
-            return "value";
+			return await dataLayer.UserRead(id);
         }
         
         // POST: api/User
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<int> Post([FromBody]string name, [FromBody]bool enabled)
         {
-        }
+			return await dataLayer.UserCreate(name, enabled);
+		}
         
         // PUT: api/User/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
+        public async Task<int> Put(int id, [FromBody]string name, [FromBody]bool enabled)
+		{
+			return await dataLayer.UserUpdate(id, name, enabled);
+		}
+
+		// DELETE: api/ApiWithActions/5
+		[HttpDelete("{id}")]
         public void Delete(int id)
         {
+			dataLayer.UserDelete(id);
         }
     }
 }
