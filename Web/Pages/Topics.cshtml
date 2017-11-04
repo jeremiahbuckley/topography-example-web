@@ -1,0 +1,11 @@
+﻿@page
+@model Web.Pages.TopicsModel
+@{
+    ViewData["Title"] = "Topics";
+}
+
+<h2>Topics</h2>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

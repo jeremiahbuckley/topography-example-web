@@ -1,3 +1,4 @@
+﻿using Web.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Web.Models;
 
 namespace Web
 {
@@ -22,10 +25,16 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+			services.AddSingleton<ITopicRepository, TopicRepository>();
+			services.AddSingleton<IThreadRepository, ThreadRepository>();
+			services.AddSingleton<ICommentRepository, CommentRepository>();
+			services.AddSingleton<IUserRepository, UserRepository>();
+			services.AddSingleton<ILoginRepository, LoginRepository>();
+		}
+
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

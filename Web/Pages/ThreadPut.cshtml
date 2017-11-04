@@ -1,0 +1,59 @@
+﻿@page
+@model Web.Pages.ThreadPutModel
+
+@{
+    ViewData["Title"] = "ThreadPut";
+}
+
+<h2>ThreadPut</h2>
+
+<h4>Thread</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Thread.Id" />
+            <div class="form-group">
+                <label asp-for="Thread.TopicId" class="control-label"></label>
+                <input asp-for="Thread.TopicId" class="form-control" />
+                <span asp-validation-for="Thread.TopicId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Thread.Name" class="control-label"></label>
+                <input asp-for="Thread.Name" class="form-control" />
+                <span asp-validation-for="Thread.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Thread.Enabled" /> @Html.DisplayNameFor(model => model.Thread.Enabled)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Thread.Pinned" /> @Html.DisplayNameFor(model => model.Thread.Pinned)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Thread.PinOrder" class="control-label"></label>
+                <input asp-for="Thread.PinOrder" class="form-control" />
+                <span asp-validation-for="Thread.PinOrder" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
