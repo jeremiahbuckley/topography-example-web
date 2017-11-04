@@ -1,4 +1,5 @@
-﻿using WebAPI.State;
+﻿using WebAPI.Filters;
+using WebAPI.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace WebAPI.Controllers
 {
     [Produces("application/json")]
     [Route("api/Thread")]
+	[AuthenticatedUser]
     public class ThreadController : Controller
     {
 		IDataLayer dataLayer;
@@ -36,16 +38,16 @@ namespace WebAPI.Controllers
         
         // POST: api/Thread
         [HttpPost]
-        public async Task<int> Post([FromBody]string name, [FromBody]int topicId, [FromBody]bool enabled, [FromBody]bool pinned, [FromBody]int? pinOrder)
+        public async Task<int> Post([FromBody]Thread thread)
 		{
-			return await dataLayer.ThreadCreate(name, topicId, enabled, pinned, pinOrder);
+			return await dataLayer.ThreadCreate(thread.Name, thread.TopicId, thread.Enabled, thread.Pinned, thread.PinOrder);
         }
         
         // PUT: api/Thread/5
         [HttpPut("{id}")]
-        public async Task<int> Put(int id, [FromBody]string name, [FromBody]int topicId, [FromBody]bool enabled, [FromBody]bool pinned, [FromBody]int? pinOrder)
+        public async Task<int> Put(int id, [FromBody]Thread thread)
 		{
-			return await dataLayer.ThreadUpdate(id, name, topicId, enabled, pinned, pinOrder);
+			return await dataLayer.ThreadUpdate(id, thread.Version, thread.Name, thread.TopicId, thread.Enabled, thread.Pinned, thread.PinOrder);
         }
         
         // DELETE: api/ApiWithActions/5

@@ -1,4 +1,5 @@
-﻿using WebAPI.State;
+﻿using WebAPI.Filters;
+using WebAPI.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace WebAPI.Controllers
 {
     [Produces("application/json")]
     [Route("api/Comment")]
+	[AuthenticatedUser]
     public class CommentController : Controller
     {
 		IDataLayer dataLayer;
@@ -36,16 +38,16 @@ namespace WebAPI.Controllers
         
         // POST: api/Comment
         [HttpPost]
-        public async Task<int> Post([FromBody]int topicId, [FromBody]int threadId, [FromBody]int userId, [FromBody]string comment, [FromBody]int? replyToCommentId)
+        public async Task<int> Post([FromBody]Comment comment)
         {
-			return await dataLayer.CommentCreate(topicId, threadId, userId, comment, replyToCommentId);
+			return await dataLayer.CommentCreate(comment.TopicId, comment.ThreadId, comment.UserId, comment.CommentStr, comment.ReplyToCommentId);
         }
         
         // PUT: api/Comment/5
         [HttpPut("{id}")]
-        public async Task<int> Put(int id, [FromBody]int topicId, [FromBody]int threadId, [FromBody]int userId, [FromBody]string comment, [FromBody]int? replyToCommentId)
+        public async Task<int> Put(int id, [FromBody]Comment comment)
         {
-			return await dataLayer.CommentUpdate(id, topicId, threadId, userId, comment, replyToCommentId);
+			return await dataLayer.CommentUpdate(id, comment.Version, comment.TopicId, comment.ThreadId, comment.UserId, comment.CommentStr, comment.ReplyToCommentId);
         }
         
         // DELETE: api/ApiWithActions/5

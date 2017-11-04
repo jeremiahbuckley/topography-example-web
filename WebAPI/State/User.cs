@@ -11,6 +11,7 @@ namespace WebAPI.State
 		public string Name { get; set; }
 		public bool Enabled { get; set; }
 		public DateTime DateTimeJoined { get; set; }
+		public byte[] Version { get; set; }
 
 		public Dictionary<int, Comment> Comments { get; set; }
 	}

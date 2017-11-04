@@ -14,6 +14,7 @@ namespace WebAPI.State
 		public int? ReplyToCommentId { get; set; }
 		public string CommentStr { get; set; }
 		public DateTime DateTimeAdded { get; set; }
+		public byte[] Version { get; set; }
 
 		public Comment ReplyToComment { get; set; }
 		public Thread Thread { get; set; }

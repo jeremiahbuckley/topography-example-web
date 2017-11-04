@@ -13,6 +13,7 @@ namespace WebAPI.State
 		public bool Enabled { get; set; }
 		public bool Pinned { get; set; }
 		public int? PinOrder { get; set; }
+		public byte[] Version { get; set; }
 
 		public Dictionary<int, Comment> Comments { get; set; }
 		public Thread Topic { get; set; }

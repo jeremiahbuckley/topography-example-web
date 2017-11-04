@@ -1,4 +1,5 @@
-﻿using WebAPI.State;
+﻿using WebAPI.Filters;
+using WebAPI.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace WebAPI.Controllers
 {
     [Produces("application/json")]
     [Route("api/Topic")]
+	[AuthenticatedUser]
     public class TopicController : Controller
     {
 		private IDataLayer dataLayer;
@@ -35,16 +37,16 @@ namespace WebAPI.Controllers
         
         // POST: api/Topic
         [HttpPost]
-        public async Task<int> Post([FromBody]string name, [FromBody]bool enabled)
+        public async Task<int> Post([FromBody]Topic topic)
         {
-			return await dataLayer.TopicCreate(name, enabled);
+			return await dataLayer.TopicCreate(topic.Name, topic.Enabled);
         }
         
         // PUT: api/Topic/5
         [HttpPut("{id}")]
-        public async Task<int> Put(int id, [FromBody]string name, [FromBody]bool enabled)
+        public async Task<int> Put(int id, [FromBody]Topic topic)
         {
-			return await dataLayer.TopicUpdate(id, name, enabled);
+			return await dataLayer.TopicUpdate(id, topic.Version, topic.Name, topic.Enabled);
         }
         
         // DELETE: api/ApiWithActions/5

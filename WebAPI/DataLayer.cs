@@ -15,22 +15,23 @@ namespace WebAPI
 		Task<int> TopicCreate(string name, bool enabled);
 		Task<IList<Topic>> TopicRead(int? id);
 		Task<IList<Topic>> TopicReadAll();
-		Task<int> TopicUpdate(int id, string name, bool enabled);
+		Task<int> TopicUpdate(int id, byte[] version, string name, bool enabled);
 		Task<int> TopicDelete(int id);
 		Task<int> ThreadCreate(string name, int topicId, bool enabled, bool pinned, int? pinOrder);
 		Task<IList<Thread>> ThreadRead(int? id);
 		Task<IList<Thread>> ThreadReadAll();
-		Task<int> ThreadUpdate(int id, string name, int topicId, bool enabled, bool pinned, int? pinOrder);
+		Task<int> ThreadUpdate(int id, byte[] version, string name, int topicId, bool enabled, bool pinned, int? pinOrder);
 		Task<int> ThreadDelete(int id);
 		Task<int> UserCreate(string name, bool enabled);
 		Task<IList<User>> UserRead(int? id);
+		Task<IList<User>> UserReadByName(string name);
 		Task<IList<User>> UserReadAll();
-		Task<int> UserUpdate(int id, string name, bool enabled);
+		Task<int> UserUpdate(int id, byte[] version, string name, bool enabled);
 		Task<int> UserDelete(int id);
 		Task<int> CommentCreate(int topicId, int threadId, int userId, string comment, int? replyToCommentId);
 		Task<IList<Comment>> CommentRead(int? id);
 		Task<IList<Comment>> CommentReadAll();
-		Task<int> CommentUpdate(int id, int topicId, int threadId, int userId, string comment, int? replyToCommentId);
+		Task<int> CommentUpdate(int id, byte[] version, int topicId, int threadId, int userId, string comment, int? replyToCommentId);
 		Task<int> CommentDelete(int id);
 	}
 
@@ -83,6 +84,7 @@ namespace WebAPI
 							result.Id = reader.GetInt32(reader.GetOrdinal("Id"));
 							result.Name = reader.GetString(reader.GetOrdinal("Name"));
 							result.Enabled = reader.GetBoolean(reader.GetOrdinal("Enabled"));
+							result.Version = (byte[])reader.GetValue(reader.GetOrdinal("Version"));
 							results.Add(result);
 						}
 					}
@@ -97,7 +99,7 @@ namespace WebAPI
 			return await TopicRead(null);
 		}
 
-		public async Task<int> TopicUpdate(int id, string name, bool enabled)
+		public async Task<int> TopicUpdate(int id, byte[] version, string name, bool enabled)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
 			{
@@ -105,6 +107,7 @@ namespace WebAPI
 				using (SqlCommand cmd = new SqlCommand("Topic_Update", conn))
 				{
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "id", DbType = DbType.String, Value = id });
+					cmd.Parameters.Add(new SqlParameter { ParameterName = "version", DbType = DbType.Byte, Value = version });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "name", DbType = DbType.String, Value = name });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "enabled", DbType = DbType.Boolean, Value = enabled });
 
@@ -175,6 +178,7 @@ namespace WebAPI
 							{
 								result.PinOrder = reader.GetInt32(reader.GetOrdinal("PinOrder"));
 							}
+							result.Version = (byte[])reader.GetValue(reader.GetOrdinal("Version"));
 							results.Add(result);
 						}
 					}
@@ -189,7 +193,7 @@ namespace WebAPI
 			return await ThreadRead(null);
 		}
 
-		public async Task<int> ThreadUpdate(int id, string name, int topicId, bool enabled, bool pinned, int? pinOrder)
+		public async Task<int> ThreadUpdate(int id, byte[] version, string name, int topicId, bool enabled, bool pinned, int? pinOrder)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
 			{
@@ -197,6 +201,7 @@ namespace WebAPI
 				using (SqlCommand cmd = new SqlCommand("Thread_Update", conn))
 				{
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "id", DbType = DbType.String, Value = id });
+					cmd.Parameters.Add(new SqlParameter { ParameterName = "version", DbType = DbType.Byte, Value = version });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "name", DbType = DbType.String, Value = name });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "pinned", DbType = DbType.Boolean, Value = pinned });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "topicid", DbType = DbType.Int32, Value = topicId });
@@ -243,14 +248,30 @@ namespace WebAPI
 
 		public async Task<IList<User>> UserRead(int? id)
 		{
+			return await UserReadByIdOrName(id, null);
+		}
+		public async Task<IList<User>> UserReadByName(string name)
+		{
+			return await UserReadByIdOrName(null, name);
+		}
+		public async Task<IList<User>> UserReadByIdOrName(int? id, string name)
+		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
 			{
 				await conn.OpenAsync();
-				using (SqlCommand cmd = new SqlCommand("User_Select", conn))
+				string commandstring = "User_Select";
+				if (id == null && name != null) commandstring = "User_SelectByName";
+				using (SqlCommand cmd = new SqlCommand(commandstring, conn))
 				{
-					if (id.HasValue)
+					if (commandstring == "User_Select")
 					{
-						cmd.Parameters.Add(new SqlParameter { ParameterName = "id", DbType = DbType.String, Value = id.Value });
+						if (id.HasValue)
+						{
+							cmd.Parameters.Add(new SqlParameter { ParameterName = "id", DbType = DbType.String, Value = id.Value });
+						}
+					} else
+					{
+						cmd.Parameters.Add(new SqlParameter { ParameterName = "name", DbType = DbType.String, Value = name });
 					}
 
 					var results = new List<User>();
@@ -263,6 +284,7 @@ namespace WebAPI
 							result.Name = reader.GetString(reader.GetOrdinal("Name"));
 							result.Enabled = reader.GetBoolean(reader.GetOrdinal("Enabled"));
 							result.DateTimeJoined = reader.GetDateTime(reader.GetOrdinal("DateTimeJoined"));
+							result.Version = (byte[])reader.GetValue(reader.GetOrdinal("Version"));
 							results.Add(result);
 						}
 					}
@@ -277,7 +299,7 @@ namespace WebAPI
 			return await UserRead(null);
 		}
 
-		public async Task<int> UserUpdate(int id, string name, bool enabled)
+		public async Task<int> UserUpdate(int id, byte[] version, string name, bool enabled)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
 			{
@@ -285,6 +307,7 @@ namespace WebAPI
 				using (SqlCommand cmd = new SqlCommand("User_Update", conn))
 				{
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "id", DbType = DbType.String, Value = id });
+					cmd.Parameters.Add(new SqlParameter { ParameterName = "version", DbType = DbType.Byte, Value = version });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "name", DbType = DbType.String, Value = name });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "enabled", DbType = DbType.Boolean, Value = enabled });
 
@@ -357,6 +380,7 @@ namespace WebAPI
 							}
 							result.CommentStr = reader.GetString(reader.GetOrdinal("Comment"));
 							result.DateTimeAdded = reader.GetDateTime(reader.GetOrdinal("DateTimeAdded"));
+							result.Version = (byte[])reader.GetValue(reader.GetOrdinal("Version"));
 							results.Add(result);
 						}
 					}
@@ -371,7 +395,7 @@ namespace WebAPI
 			return await CommentRead(null);
 		}
 
-		public async Task<int> CommentUpdate(int id, int topicId, int threadId, int userId, string comment, int? replyToCommentId)
+		public async Task<int> CommentUpdate(int id, byte[] version, int topicId, int threadId, int userId, string comment, int? replyToCommentId)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
 			{
@@ -379,6 +403,7 @@ namespace WebAPI
 				using (SqlCommand cmd = new SqlCommand("Comment_Update", conn))
 				{
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "id", DbType = DbType.String, Value = id });
+					cmd.Parameters.Add(new SqlParameter { ParameterName = "version", DbType = DbType.Byte, Value = version });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "topicid", DbType = DbType.Int32, Value = topicId });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "threadid", DbType = DbType.Int32, Value = threadId });
 					cmd.Parameters.Add(new SqlParameter { ParameterName = "userid", DbType = DbType.Int32, Value = userId });
