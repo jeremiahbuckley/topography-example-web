@@ -11,15 +11,27 @@ namespace WebAPI.Filters
     {
 		public override void OnActionExecuting(ActionExecutingContext context)
 		{
-			if (!context.HttpContext.Request.Headers.ContainsKey("x-jb-api-username") || !context.HttpContext.Request.Headers.ContainsKey("x-jb-api-authtoken"))
+			if (!context.HttpContext.Request.Headers.ContainsKey("x-jb-api-username") ||
+				!context.HttpContext.Request.Headers.ContainsKey("x-jb-api-authtoken"))
 			{
 				context.Result = new UnauthorizedResult();
-			}
-			var username = context.HttpContext.Request.Headers["x-jb-api-username"][0];
-			var authtoken = context.HttpContext.Request.Headers["x-jb-api-authtoken"][0];
-			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(authtoken) || authtoken != username.GetHashCode().ToString())
+			} else
 			{
-				context.Result = new UnauthorizedResult();
+				var usernames = context.HttpContext.Request.Headers["x-jb-api-username"];
+				var authtokens = context.HttpContext.Request.Headers["x-jb-api-authtoken"];
+				if (usernames.Count == 0 ||
+					authtokens.Count == 0)
+				{
+					context.Result = new UnauthorizedResult();
+				} else
+				{
+					var username = usernames[0];
+					var authtoken = authtokens[0];
+					if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(authtoken) || authtoken != username.GetHashCode().ToString())
+					{
+						context.Result = new UnauthorizedResult();
+					}
+				}
 			}
 		}
     }

@@ -23,6 +23,13 @@ namespace WebAPI.Controllers
 	{
 		IDataLayer dataLayer;
 
+		public class AuthResponse
+		{
+			public string UserName { get; set; }
+			public string AuthToken { get; set; }
+		}
+
+
 		public AuthorizationTokenController(IDataLayer dataLayer)
 		{
 			this.dataLayer = dataLayer;
@@ -38,7 +45,8 @@ namespace WebAPI.Controllers
 				(string.Compare(username, password, StringComparison.InvariantCultureIgnoreCase) == 0) &&
 				(dataLayer.UserReadByName(username) != null))
 			{
-				return Ok(string.Format("{{token: \"{0}\", username: \"{1}\"}}", username.GetHashCode().ToString(), username));
+				var auth = new AuthResponse { UserName = username, AuthToken = username.GetHashCode().ToString() };
+				return Ok(auth);
 			} else
 			{
 				return new UnauthorizedResult();
