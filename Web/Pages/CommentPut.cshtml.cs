@@ -29,7 +29,7 @@ namespace Web.Pages
 				return NotFound();
 			}
 
-			var Commentlist = await context.GetComment(id);
+			var Commentlist = await context.GetComment(HttpContext, id);
 
 			if (Commentlist == null || Commentlist.Count == 0)
 			{
@@ -46,7 +46,7 @@ namespace Web.Pages
 				return Page();
 			}
 
-			var id = await context.PostComment(Comment);
+			var id = await context.PostComment(HttpContext, Comment);
 
 			return RedirectToPage("./Comments");
 		}

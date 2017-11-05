@@ -27,7 +27,7 @@ namespace Web.Pages
 				return NotFound();
 			}
 
-			var Userlist = await context.GetUser(id);
+			var Userlist = await context.GetUser(HttpContext, id);
 
 			if (Userlist == null || Userlist.Count == 0)
 			{

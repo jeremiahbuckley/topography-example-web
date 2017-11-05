@@ -33,7 +33,7 @@ namespace Web.Pages
 				return Page();
 			}
 
-			var id = await context.PostComment(Comment);
+			var id = await context.PostComment(HttpContext, Comment);
 
 			return RedirectToPage("./Threads");
 		}

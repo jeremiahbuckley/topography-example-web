@@ -22,7 +22,7 @@ namespace Web.Pages
 
         public async Task OnGetAsync()
         {
-            Thread = await context.GetAll();
+            Thread = await context.GetAll(HttpContext);
         }
     }
 }

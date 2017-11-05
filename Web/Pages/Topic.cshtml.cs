@@ -22,8 +22,7 @@ namespace Web.Pages
 
         public async Task OnGetAsync()
         {
-			//Topic = await _context.Topic.ToListAsync();
-			Topic = await context.GetAll();
+			Topic = await context.GetAll(HttpContext);
         }
     }
 }

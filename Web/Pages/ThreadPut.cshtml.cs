@@ -29,7 +29,7 @@ namespace Web.Pages
                 return NotFound();
             }
 
-            var Threadlist = await context.GetThread(id);
+            var Threadlist = await context.GetThread(HttpContext, id);
 
             if (Threadlist == null || Threadlist.Count == 0)
             {
@@ -48,7 +48,7 @@ namespace Web.Pages
 
             try
             {
-                await context.PutThread(Thread);
+                await context.PutThread(HttpContext, Thread);
             }
             catch (Exception ex)
             {

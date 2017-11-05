@@ -9,15 +9,16 @@ using System.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Web.Context
 {
 	public interface ICommentRepository
 	{
-		Task<IList<Comment>> GetAll();
-		Task<IList<Comment>> GetComment(int? id);
-		Task<int> PostComment(Comment thread);
-		Task<int> PutComment(Comment comment);
+		Task<IList<Comment>> GetAll(HttpContext httpContext);
+		Task<IList<Comment>> GetComment(HttpContext httpContext, int? id);
+		Task<int> PostComment(HttpContext httpContext, Comment comment);
+		Task<int> PutComment(HttpContext httpContext, Comment comment);
 	}
 
 	public class CommentRepository : ICommentRepository
@@ -40,17 +41,25 @@ namespace Web.Context
 			client = new HttpClient();
 			client.BaseAddress = new Uri(baseUri + uri);
 			client.DefaultRequestHeaders.Accept.Clear();
-			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
-		public Task<IList<Comment>> GetAll()
+		public Task<IList<Comment>> GetAll(HttpContext httpContext)
 		{
-			return GetComment(null);
+			return GetComment(httpContext, null);
 		}
 
-		public async Task<IList<Comment>> GetComment(int? id)
+		public async Task<IList<Comment>> GetComment(HttpContext httpContext, int? id)
 		{
-			HttpResponseMessage response = await client.GetAsync(id.HasValue ? "/" + id.ToString() : "");
+			HttpRequestMessage request = new HttpRequestMessage();
+			request.Headers.Add("x-jb-api-username", httpContext.Request.Cookies["username"]);
+			request.Headers.Add("x-jb-api-authtoken", httpContext.Request.Cookies["authtoken"]);
+			request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			if (id.HasValue)
+			{
+				request.RequestUri = new Uri(client.BaseAddress + "/" + id.ToString());
+			}
+			request.Method = HttpMethod.Get;
+			HttpResponseMessage response = await client.SendAsync(request);
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();
@@ -63,10 +72,15 @@ namespace Web.Context
 			}
 		}
 
-		public async Task<int> PostComment(Comment thread)
+		public async Task<int> PostComment(HttpContext httpContext, Comment comment)
 		{
-			string body = JsonConvert.SerializeObject(thread);
-			HttpResponseMessage response = await client.PostAsync("", new StringContent(body, Encoding.UTF8, "application/json"));
+			HttpRequestMessage request = new HttpRequestMessage();
+			request.Headers.Add("x-jb-api-username", httpContext.Request.Cookies["username"]);
+			request.Headers.Add("x-jb-api-authtoken", httpContext.Request.Cookies["authtoken"]);
+			request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			request.Method = HttpMethod.Post;
+			request.Content = new StringContent(JsonConvert.SerializeObject(comment), Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.SendAsync(request);
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();
@@ -79,10 +93,16 @@ namespace Web.Context
 			}
 		}
 
-		public async Task<int> PutComment(Comment comment)
+		public async Task<int> PutComment(HttpContext httpContext, Comment comment)
 		{
-			string body = JsonConvert.SerializeObject(comment);
-			HttpResponseMessage response = await client.PostAsync("/" + comment.Id.ToString(), new StringContent(body, Encoding.UTF8, "application/json"));
+			HttpRequestMessage request = new HttpRequestMessage();
+			request.Headers.Add("x-jb-api-username", httpContext.Request.Cookies["username"]);
+			request.Headers.Add("x-jb-api-authtoken", httpContext.Request.Cookies["authtoken"]);
+			request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			request.RequestUri = new Uri(client.BaseAddress + "/" + comment.Id.ToString());
+			request.Method = HttpMethod.Put;
+			request.Content = new StringContent(JsonConvert.SerializeObject(comment), Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.SendAsync(request);
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();

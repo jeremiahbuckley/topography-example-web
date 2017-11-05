@@ -9,15 +9,16 @@ using System.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Web.Context
 {
 	public interface IThreadRepository
 	{
-		Task<IList<Thread>> GetAll();
-		Task<IList<Thread>> GetThread(int? id);
-		Task<int> PostThread(Thread thread);
-		Task<int> PutThread(Thread thread);
+		Task<IList<Thread>> GetAll(HttpContext httpContext);
+		Task<IList<Thread>> GetThread(HttpContext httpContext, int? id);
+		Task<int> PostThread(HttpContext httpContext, Thread thread);
+		Task<int> PutThread(HttpContext httpContext, Thread thread);
 	}
 
 	public class ThreadRepository : IThreadRepository
@@ -40,17 +41,25 @@ namespace Web.Context
 			client = new HttpClient();
 			client.BaseAddress = new Uri(baseUri + uri);
 			client.DefaultRequestHeaders.Accept.Clear();
-			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
-		public Task<IList<Thread>> GetAll()
+		public Task<IList<Thread>> GetAll(HttpContext httpContext)
 		{
-			return GetThread(null);
+			return GetThread(httpContext, null);
 		}
 
-		public async Task<IList<Thread>> GetThread(int? id)
+		public async Task<IList<Thread>> GetThread(HttpContext httpContext, int? id)
 		{
-			HttpResponseMessage response = await client.GetAsync(id.HasValue ? "/" + id.ToString() : "");
+			HttpRequestMessage request = new HttpRequestMessage();
+			request.Headers.Add("x-jb-api-username", httpContext.Request.Cookies["username"]);
+			request.Headers.Add("x-jb-api-authtoken", httpContext.Request.Cookies["authtoken"]);
+			request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			if (id.HasValue)
+			{
+				request.RequestUri = new Uri(client.BaseAddress + "/" + id.ToString());
+			}
+			request.Method = HttpMethod.Get;
+			HttpResponseMessage response = await client.SendAsync(request);
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();
@@ -63,10 +72,15 @@ namespace Web.Context
 			}
 		}
 
-		public async Task<int> PostThread(Thread thread)
+		public async Task<int> PostThread(HttpContext httpContext, Thread thread)
 		{
-			string body = JsonConvert.SerializeObject(thread);
-			HttpResponseMessage response = await client.PostAsync("", new StringContent(body, Encoding.UTF8, "application/json"));
+			HttpRequestMessage request = new HttpRequestMessage();
+			request.Headers.Add("x-jb-api-username", httpContext.Request.Cookies["username"]);
+			request.Headers.Add("x-jb-api-authtoken", httpContext.Request.Cookies["authtoken"]);
+			request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			request.Method = HttpMethod.Post;
+			request.Content = new StringContent(JsonConvert.SerializeObject(thread), Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.SendAsync(request);
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();
@@ -79,10 +93,16 @@ namespace Web.Context
 			}
 		}
 
-		public async Task<int> PutThread(Thread thread)
+		public async Task<int> PutThread(HttpContext httpContext, Thread thread)
 		{
-			string body = JsonConvert.SerializeObject(thread);
-			HttpResponseMessage response = await client.PutAsync("/" + thread.Id, new StringContent(body, Encoding.UTF8, "application/json"));
+			HttpRequestMessage request = new HttpRequestMessage();
+			request.Headers.Add("x-jb-api-username", httpContext.Request.Cookies["username"]);
+			request.Headers.Add("x-jb-api-authtoken", httpContext.Request.Cookies["authtoken"]);
+			request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			request.RequestUri = new Uri(client.BaseAddress + "/" + thread.Id.ToString());
+			request.Method = HttpMethod.Put;
+			request.Content = new StringContent(JsonConvert.SerializeObject(thread), Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.SendAsync(request);
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();

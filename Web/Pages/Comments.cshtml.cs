@@ -22,7 +22,7 @@ namespace Web.Pages
 
         public async Task OnGetAsync()
         {
-            Comment = await context.GetAll();
+            Comment = await context.GetAll(HttpContext);
         }
     }
 }
