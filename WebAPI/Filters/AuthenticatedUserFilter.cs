@@ -11,6 +11,9 @@ namespace WebAPI.Filters
     {
 		public override void OnActionExecuting(ActionExecutingContext context)
 		{
+			// TODO: remove
+			return;
+
 			if (!context.HttpContext.Request.Headers.ContainsKey("x-jb-api-username") ||
 				!context.HttpContext.Request.Headers.ContainsKey("x-jb-api-authtoken"))
 			{

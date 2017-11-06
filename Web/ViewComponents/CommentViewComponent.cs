@@ -19,10 +19,13 @@ namespace Web.ViewComponents
 
 		public IList<Web.Models.Comment> Comment { get; set; }
 
-		public async Task<IViewComponentResult> InvokeAsync()
+		public SharedModel SharedModel { get; set; }
+
+		public async Task<IViewComponentResult> InvokeAsync(SharedModel sharedModel)
 		{
+			SharedModel = sharedModel;
 			Comment = await context.GetAll(HttpContext);
-			return View(Comment);
+			return View(this);
 
 		}
 	}

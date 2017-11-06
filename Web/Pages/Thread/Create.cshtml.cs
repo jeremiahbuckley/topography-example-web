@@ -11,32 +11,33 @@ namespace Web.Pages.Thread
 {
     public class CreateModel : PageModel
     {
-        //private readonly Web.Models.ThreadContext _context;
+		private readonly Web.Context.IThreadRepository context;
 
-        //public CreateModel(Web.Models.ThreadContext context)
-        //{
-        //    _context = context;
-        //}
+		public CreateModel(Web.Context.IThreadRepository context)
+		{
+			this.context = context;
+		}
 
-        public IActionResult OnGet()
+		public IActionResult OnGet(int topicId)
         {
+			Thread = new Web.Models.Thread();
+			Thread.TopicId = topicId;
             return Page();
         }
 
         [BindProperty]
         public Web.Models.Thread Thread { get; set; }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+		public async Task<IActionResult> OnPostAsync()
+		{
+			if (!ModelState.IsValid)
+			{
+				return Page();
+			}
 
-            //_context.Thread.Add(Thread);
-            //await _context.SaveChangesAsync();
+			var id = await context.PostThread(HttpContext, Thread);
 
-            return RedirectToPage("./Index");
-        }
-    }
+			return RedirectToPage("/Index");
+		}
+	}
 }

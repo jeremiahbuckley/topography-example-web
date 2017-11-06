@@ -11,33 +11,35 @@ namespace Web.Pages.Comment
 {
     public class CreateModel : PageModel
     {
-        //private readonly Web.Models.CommentContext _context;
+		private readonly Web.Context.ICommentRepository context;
 
-        //public CreateModel(Web.Models.CommentContext context)
-        //{
-        //    _context = context;
-        //}
+		public CreateModel(Web.Context.ICommentRepository context)
+		{
+			this.context = context;
+		}
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
+		public IActionResult OnGet(int threadId, int topicId, int? replyToCommentId)
+		{
+			Comment = new Web.Models.Comment();
+			Comment.ThreadId = threadId;
+			Comment.TopicId = topicId;
+			Comment.ReplyToCommentId = replyToCommentId;
+			return Page();
+		}
 
-        [BindProperty]
-        public Web.Models.Comment Comment { get; set; }
+		[BindProperty]
+		public Web.Models.Comment Comment { get; set; }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-			await new Task(() => { int x = 0; });
+		public async Task<IActionResult> OnPostAsync()
+		{
+			if (!ModelState.IsValid)
+			{
+				return Page();
+			}
 
-			//_context.Comment.Add(Comment);
-			//await _context.SaveChangesAsync();
+			var id = await context.PostComment(HttpContext, Comment);
 
-			return RedirectToPage("./Index");
-        }
-    }
+			return RedirectToPage("/Index");
+		}
+	}
 }

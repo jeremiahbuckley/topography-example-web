@@ -11,29 +11,31 @@ namespace Web.Pages.Thread
 {
     public class DetailsModel : PageModel
     {
-        //private readonly Web.Models.ThreadContext _context;
+		private readonly Web.Context.IThreadRepository context;
 
-        //public DetailsModel(Web.Models.ThreadContext context)
-        //{
-        //    _context = context;
-        //}
+		public DetailsModel(Web.Context.IThreadRepository context)
+		{
+			this.context = context;
+		}
 
-        public Web.Models.Thread Thread { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		public Web.Models.Thread Thread { get; set; }
 
-            //Thread = await _context.Thread.SingleOrDefaultAsync(m => m.Id == id);
+		public async Task<IActionResult> OnGetAsync(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-            //if (Thread == null)
-            //{
-            //    return NotFound();
-            //}
-            return Page();
-        }
-    }
+			var Threadlist = await context.GetThread(HttpContext, id);
+
+			if (Threadlist == null || Threadlist.Count == 0)
+			{
+				return NotFound();
+			}
+			Thread = Threadlist[0];
+			return Page();
+		}
+	}
 }

@@ -19,10 +19,13 @@ namespace Web.ViewComponents
 
 		public IList<Web.Models.Thread> Thread { get; set; }
 
-		public async Task<IViewComponentResult> InvokeAsync()
+		public SharedModel SharedModel { get; set; }
+
+		public async Task<IViewComponentResult> InvokeAsync(SharedModel sharedModel)
 		{
+			SharedModel = sharedModel;
 			Thread = await context.GetAll(HttpContext);
-			return View<IEnumerable<Web.Models.Thread>>(Thread);
+			return View(this);
 		}
 	}
 }

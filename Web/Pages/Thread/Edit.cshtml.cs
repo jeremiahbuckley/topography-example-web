@@ -12,53 +12,43 @@ namespace Web.Pages.Thread
 {
     public class EditModel : PageModel
     {
-        //private readonly Web.Models.ThreadContext _context;
+		private readonly Web.Context.IThreadRepository context;
 
-        //public EditModel(Web.Models.ThreadContext context)
-        //{
-        //    _context = context;
-        //}
+		public EditModel(Web.Context.IThreadRepository context)
+		{
+			this.context = context;
+		}
 
-        [BindProperty]
+		[BindProperty]
         public Web.Models.Thread Thread { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-			await new Task(() => { int x = 0; });
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-			//Thread = await _context.Thread.SingleOrDefaultAsync(m => m.Id == id);
+			var Threadlist = await context.GetThread(HttpContext, id);
 
-            if (Thread == null)
-            {
-                return NotFound();
-            }
-            return Page();
-        }
+			if (Threadlist == null || Threadlist.Count == 0)
+			{
+				return NotFound();
+			}
+			Thread = Threadlist[0];
+			return Page();
+		}
 
-        public async Task<IActionResult> OnPostAsync()
+		public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+			if (!ModelState.IsValid)
+			{
+				return Page();
+			}
 
-            //_context.Attach(Thread).State = EntityState.Modified;
+			var id = await context.PostThread(HttpContext, Thread);
 
-            try
-            {
-				await new Task(() => { int x = 0; });
-				//await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                
-            }
-
-            return RedirectToPage("./Index");
-        }
-    }
+			return RedirectToPage("./Index");
+		}
+	}
 }

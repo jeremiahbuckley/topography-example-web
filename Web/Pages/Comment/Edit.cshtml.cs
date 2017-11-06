@@ -12,54 +12,43 @@ namespace Web.Pages.Comment
 {
     public class EditModel : PageModel
     {
-        //private readonly Web.Models.CommentContext _context;
+		private readonly Web.Context.ICommentRepository context;
 
-        //public EditModel(Web.Models.CommentContext context)
-        //{
-        //    _context = context;
-        //}
+		public EditModel(Web.Context.ICommentRepository context)
+		{
+			this.context = context;
+		}
 
-        [BindProperty]
-        public Web.Models.Comment Comment { get; set; }
+		[BindProperty]
+		public Web.Models.Comment Comment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-			await new Task(() => { int x = 0; });
-
-			//Comment = await _context.Comment.SingleOrDefaultAsync(m => m.Id == id);
-
-            if (Comment == null)
-            {
-                return NotFound();
-            }
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            //_context.Attach(Comment).State = EntityState.Modified;
-
-            try
+		public async Task<IActionResult> OnGetAsync(int? id)
+		{
+			if (id == null)
 			{
-				await new Task(() => { int x = 0; });
+				return NotFound();
+			}
 
-				//await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                
-            }
+			var Commentlist = await context.GetComment(HttpContext, id);
 
-            return RedirectToPage("./Index");
-        }
-    }
+			if (Commentlist == null || Commentlist.Count == 0)
+			{
+				return NotFound();
+			}
+			Comment = Commentlist[0];
+			return Page();
+		}
+
+		public async Task<IActionResult> OnPostAsync()
+		{
+			if (!ModelState.IsValid)
+			{
+				return Page();
+			}
+
+			var id = await context.PostComment(HttpContext, Comment);
+
+			return RedirectToPage("./Index");
+		}
+	}
 }

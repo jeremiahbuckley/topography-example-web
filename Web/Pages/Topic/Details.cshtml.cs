@@ -11,31 +11,30 @@ namespace Web.Pages.Topic
 {
     public class DetailsModel : PageModel
     {
-        //private readonly Web.Models.TopicContext _context;
+		private readonly Web.Context.ITopicRepository context;
 
-        //public DetailsModel(Web.Models.TopicContext context)
-        //{
-        //    _context = context;
-        //}
+		public DetailsModel(Web.Context.ITopicRepository context)
+		{
+			this.context = context;
+		}
 
-        public Web.Models.Topic Topic { get; set; }
+		public Web.Models.Topic Topic { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> OnGetAsync(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-			await new Task(() => { int x = 0; });
+			var Topiclist = await context.GetTopic(HttpContext, id);
 
-			//Topic = await _context.Topic.SingleOrDefaultAsync(m => m.Id == id);
-
-            if (Topic == null)
-            {
-                return NotFound();
-            }
-            return Page();
-        }
-    }
+			if (Topiclist == null || Topiclist.Count == 0)
+			{
+				return NotFound();
+			}
+			Topic = Topiclist[0];
+			return Page();
+		}
+	}
 }

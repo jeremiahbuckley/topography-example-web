@@ -26,14 +26,14 @@
             <div class="form-group">
                 <div class="checkbox">
                     <label>
-                        <input asp-for="Thread.Enabled" /> @Html.DisplayNameFor(model => model.Enabled))
+                        <input asp-for="Thread.Enabled" /> @Html.DisplayNameFor(model => model.Thread.Enabled))
                     </label>
                 </div>
             </div>
             <div class="form-group">
                 <div class="checkbox">
                     <label>
-                        <input asp-for="Thread.Pinned" /> @Html.DisplayNameFor(model => model.Pinned))
+                        <input asp-for="Thread.Pinned" /> @Html.DisplayNameFor(model => model.Thread.Pinned))
                     </label>
                 </div>
             </div>
@@ -55,7 +55,7 @@
 </div>
 
 <div>
-    <a asp-page="Index">Back to List</a>
+    <a href="/Index">Back to List</a>
 </div>
 
 @section Scripts {

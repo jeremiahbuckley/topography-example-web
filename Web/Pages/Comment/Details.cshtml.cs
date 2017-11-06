@@ -11,30 +11,32 @@ namespace Web.Pages.Comment
 {
     public class DetailsModel : PageModel
     {
-        //private readonly Web.Models.CommentContext _context;
+		private readonly Web.Context.ICommentRepository context;
 
-        //public DetailsModel(Web.Models.CommentContext context)
-        //{
-        //    _context = context;
-        //}
+		public DetailsModel(Web.Context.ICommentRepository context)
+		{
+			this.context = context;
+		}
 
-        public Web.Models.Comment Comment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-			await new Task(() => { int x = 0; });
+		[BindProperty]
+		public Web.Models.Comment Comment { get; set; }
 
-			//Comment = await _context.Comment.SingleOrDefaultAsync(m => m.Id == id);
+		public async Task<IActionResult> OnGetAsync(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-            if (Comment == null)
-            {
-                return NotFound();
-            }
-            return Page();
-        }
-    }
+			var Commentlist = await context.GetComment(HttpContext, id);
+
+			if (Commentlist == null || Commentlist.Count == 0)
+			{
+				return NotFound();
+			}
+			Comment = Commentlist[0];
+			return Page();
+		}
+	}
 }
