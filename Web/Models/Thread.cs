@@ -15,9 +15,9 @@ namespace Web.Models
 		public int? PinOrder { get; set; }
 		public byte[] Version { get; set; }
 
-		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
-		public Dictionary<int, Comment> Comments { get; set; }
-		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
-		public Thread Topic { get; set; }
+		//[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		//public Dictionary<int, Comment> Comments { get; set; }
+		//[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		//public Thread Topic { get; set; }
 	}
 }

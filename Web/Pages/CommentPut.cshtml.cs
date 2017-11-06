@@ -20,7 +20,7 @@ namespace Web.Pages
 		}
 
 		[BindProperty]
-		public Comment Comment { get; set; }
+		public Web.Models.Comment Comment { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(int? id)
 		{

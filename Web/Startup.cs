@@ -52,7 +52,7 @@ namespace Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action=Login}/{id?}");
+                    template: "{controller}/{action=Index}/{id?}");
             });
         }
     }

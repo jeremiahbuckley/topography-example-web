@@ -9,7 +9,23 @@ namespace Web.Pages
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+		public Web.Context.ICommentRepository CommentContext { get; }
+		public Web.Context.IUserRepository UserContext { get; }
+
+		public Web.Pages.CommentsModel CommentModel { get; private set; }
+		public Web.Pages.UserSettingsModel UserModel { get; private set; }
+
+		public IndexModel(Context.ICommentRepository commentContext,
+			Context.IUserRepository userContext)
+		{
+			this.CommentContext = commentContext;
+			this.UserContext = userContext;
+
+			CommentModel = new Pages.CommentsModel(CommentContext);
+			UserModel = new UserSettingsModel(UserContext);
+		}
+
+		public void OnGet()
         {
 
         }

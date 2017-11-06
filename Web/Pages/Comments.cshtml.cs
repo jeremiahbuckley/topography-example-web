@@ -18,7 +18,7 @@ namespace Web.Pages
 			this.context = context;
         }
 
-        public IList<Comment> Comment { get;set; }
+        public IList<Web.Models.Comment> Comment { get;set; }
 
         public async Task OnGetAsync()
         {

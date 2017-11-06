@@ -1,0 +1,61 @@
+﻿@page
+@model Web.Pages.Comment.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Comment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.TopicId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.TopicId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.ThreadId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.ThreadId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.UserId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.UserId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.ReplyToCommentId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.ReplyToCommentId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.CommentStr)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.CommentStr)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.DateTimeAdded)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.DateTimeAdded)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment.Version)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment.Version)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Comment.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

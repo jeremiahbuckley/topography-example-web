@@ -57,6 +57,12 @@
             </div>
         </div>
     </div>
+    <div>
+        @await Component.InvokeAsync("Topic", new { filter = "none" })
+        @await Component.InvokeAsync("Thread")
+        @await Component.InvokeAsync("Comment")
+        @*@await Component.InvokeAsync("PriorityList", new { maxPriority = 4, isDone = true })*@
+    </div>
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>

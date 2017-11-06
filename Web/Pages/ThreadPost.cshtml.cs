@@ -24,7 +24,7 @@ namespace Web.Pages
         }
 
         [BindProperty]
-        public Thread Thread { get; set; }
+        public Web.Models.Thread Thread { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {

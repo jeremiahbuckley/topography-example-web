@@ -18,7 +18,7 @@ namespace Web.Pages
             this.context = context;
         }
 
-        public User User { get; set; }
+        public Web.Models.User User { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(int? id)
 		{

@@ -7,24 +7,30 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Models;
 
-namespace Web.Pages
+namespace Web.Pages.Login
 {
-    public class LoginModel : PageModel
-    {
-        private readonly Web.Context.ILoginRepository context;
+	public class IndexModel : PageModel
+	{
+		private readonly Web.Context.ILoginRepository context;
 
-        public LoginModel(Web.Context.ILoginRepository context)
-        {
-            this.context = context;
-        }
+		//public IndexModel(Web.Context.ILoginRepository context)
+		//{
+		//	this.context = context;
+		//}
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
+		public IActionResult OnGet()
+		{
+			return Page();
+		}
 
-        [BindProperty]
-        public Login Login { get; set; }
+		public async Task<IActionResult> OnGetAsync()
+		{
+			Login = await Task.Run(() => new Web.Models.Login());
+			return Page();
+		}
+
+		[BindProperty]
+		public Web.Models.Login Login { get; set; }
 
 		public async Task<IActionResult> OnPostAsync()
 		{
@@ -45,7 +51,7 @@ namespace Web.Pages
 				return Page();
 			}
 
-			return RedirectToPage("./Threads");
+			return RedirectToPage("./Index");
 		}
 	}
 }

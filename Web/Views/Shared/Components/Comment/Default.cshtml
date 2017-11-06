@@ -1,0 +1,63 @@
+﻿@model IList<Web.Models.Comment>
+@{
+//ViewData["Title"] = "Comments";
+}
+<h2>Comments</h2>
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].TopicId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ThreadId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].UserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ReplyToCommentId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].CommentStr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].DateTimeAdded)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TopicId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ThreadId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReplyToCommentId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CommentStr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateTimeAdded)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+}
+    </tbody>
+</table>

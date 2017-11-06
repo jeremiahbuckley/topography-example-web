@@ -9,20 +9,5 @@ using Web.Models;
 
 namespace Web.Pages
 {
-    public class TopicModel : PageModel
-    {
-		private readonly Web.Context.ITopicRepository context;
-
-        public TopicModel(Web.Context.ITopicRepository context)
-        {
-            this.context = context;
-        }
-
-        public IList<Topic> Topic { get;set; }
-
-        public async Task OnGetAsync()
-        {
-			Topic = await context.GetAll(HttpContext);
-        }
-    }
 }
+

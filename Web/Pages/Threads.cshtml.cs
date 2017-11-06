@@ -9,20 +9,21 @@ using Web.Models;
 
 namespace Web.Pages
 {
-    public class ThreadsModel : PageModel
+    public class ThreadsViewComponent : ViewComponent
     {
         private readonly Web.Context.IThreadRepository context;
 
-        public ThreadsModel(Web.Context.IThreadRepository context)
+        public ThreadsViewComponent(Web.Context.IThreadRepository context)
         {
             this.context = context;
         }
 
-        public IList<Thread> Thread { get;set; }
+        public IList<Web.Models.Thread> Thread { get;set; }
 
-        public async Task OnGetAsync()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             Thread = await context.GetAll(HttpContext);
+			return View<IEnumerable<Web.Models.Thread>>(Thread.ToArray());
         }
     }
 }

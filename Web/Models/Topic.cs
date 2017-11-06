@@ -12,7 +12,7 @@ namespace Web.Models
 		public bool Enabled { get; set; }
 		public byte[] Version { get; set; }
 
-		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
-		public Dictionary<int, Thread> Threads { get; set; }
+		//[System.ComponentModel.DataAnnotations.Schema.NotMapped]
+		//public Dictionary<int, Thread> Threads { get; set; }
 	}
 }
