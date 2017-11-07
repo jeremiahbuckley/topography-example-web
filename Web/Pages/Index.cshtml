@@ -5,15 +5,36 @@
 }
 
 
-
 <div class="row">
     <div class="col-md-3">
-        @await Component.InvokeAsync("Topic", new { filter = "none" })
+        <h2>Topics</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Topic[0].Name)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Topic)
+                {
+                    <tr onclick="updateSelectedTopic(@item.Id)" class=@(item.Enabled ? "" : "info")>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name, item.Enabled ? new { } : (object)new { @readonly = "readonly" })
+                        </td>
+                        <td>
+                            <a href=@("/Topic/Details?id=" + @item.Id)>Details</a>
+                        </td>
+                    </tr>}
+            </tbody>
+        </table>
     </div>
-    <div class="col-md-3">
-        @await Component.InvokeAsync("Thread")
+    <div class="col-md-3" id="threadList">
+        @await Component.InvokeAsync("Thread", new { sharedModel = Model.SharedModel })
     </div>
-    <div class="col-md-6">
-        @await Component.InvokeAsync("Comment")
+    <div class="col-md-6" id="commentList">
+        @await Component.InvokeAsync("Comment", new { sharedModel = Model.SharedModel })
     </div>
 </div>

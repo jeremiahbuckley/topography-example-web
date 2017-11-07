@@ -16,9 +16,6 @@
                 @Html.DisplayNameFor(model => model.Thread[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Thread[0].Enabled)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Thread[0].Pinned)
             </th>
             <th>
@@ -30,24 +27,24 @@
     <tbody>
         @foreach (var item in Model.Thread)
         {
-            <tr>
+            <tr class=@((item.Enabled && (Model.SharedModel.CurrentTopic == null || Model.SharedModel.CurrentTopic.Enabled)) ? "" : "info")>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TopicId)
+                    @Html.DisplayFor(modelItem => item.TopicId, item.Enabled ? new { } : (object)new { @readonly = "readonly" })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.Name, item.Enabled ? new { } : (object)new { @readonly = "readonly" })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Enabled)
+                    @Html.DisplayFor(modelItem => item.Pinned, item.Enabled ? new { } : (object)new { @readonly = "readonly" })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Pinned)
+                    @Html.DisplayFor(modelItem => item.PinOrder, item.Enabled ? new { } : (object)new { @readonly = "readonly" })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PinOrder)
-                </td>
-                <td>
-                    <a href=@("/Thread/Edit?id=" + item.Id)>Edit</a> |
+                    @if (item.Enabled)
+                    {
+                        <span><a href=@("/Thread/Edit?id=" + item.Id)>Edit</a> |</span>
+}
                     <a href=@("/Thread/Details?id=" + item.Id)>Details</a>
                 </td>
             </tr>

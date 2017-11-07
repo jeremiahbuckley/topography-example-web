@@ -26,7 +26,7 @@ namespace Web.ViewComponents
 			Topic = await context.GetAll(HttpContext);
 			foreach(Web.Models.Topic t in Topic)
 			{
-				SharedModel.CurrentTopicId = t.Id;
+				SharedModel.CurrentTopic = t;
 				break;
 			}
 		}

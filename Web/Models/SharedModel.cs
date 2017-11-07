@@ -7,10 +7,8 @@ namespace Web.Models
 {
     public class SharedModel
     {
-		public int? CurrentTopicId { get; set; }
-		public bool TopicEnabled { get; set; }
-		public int? CurrentThreadId { get; set; }
-		public bool ThreadEnabled { get; set; }
-		public int? CurrentCommentId { get; set; }
+		public Topic CurrentTopic { get; set; }
+		public Thread CurrentThread { get; set; }
+		public Comment CurrentComment { get; set; }
     }
 }

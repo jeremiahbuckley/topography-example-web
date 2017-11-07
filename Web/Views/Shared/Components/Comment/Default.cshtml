@@ -30,7 +30,8 @@
     <tbody>
         @foreach (var item in Model.Comment)
         {
-            <tr>
+            <tr class=@(((Model.SharedModel.CurrentTopic == null || Model.SharedModel.CurrentTopic.Enabled) && 
+                (Model.SharedModel.CurrentThread == null || Model.SharedModel.CurrentThread.Enabled))  ? "" : "info")>
                 <td>
                     @Html.DisplayFor(modelItem => item.TopicId)
                 </td>
@@ -55,6 +56,6 @@
                     <a href=@("/Comment/Create?topicId=1&threadId=0&replyToCommentId=" + item.Id)>Reply To</a>
                 </td>
             </tr>
-}
+        }
     </tbody>
 </table>
